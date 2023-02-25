@@ -1,5 +1,5 @@
-page {
-  background-color: #fafafa;
+.wrapper {
+  padding: 16rpx 32rpx;
 }
 
 .search-wrapper {
@@ -36,27 +36,6 @@ page {
         height: 48rpx;
         padding: 32rpx;
       }
-
-      .back-button {
-        display: flex;
-        align-items: center;
-        font-weight: bold;
-        padding: 32rpx;
-      }
     }
   }
-}
-
-.history-content {
-  padding: 0 32rpx;
-
-  .history-item {
-    border-bottom: 1px solid #d8d8d8;
-    padding: 32rpx 0;
-  }
-}
-
-.clear-history {
-  text-align: center;
-  padding: 32rpx 0;
 }
