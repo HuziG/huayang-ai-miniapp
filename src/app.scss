@@ -1,0 +1,7 @@
+.active-animation {
+  transition: opacity 0.2s;
+
+  &:active {
+    opacity: 0.5;
+  }
+}
