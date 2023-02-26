@@ -11,10 +11,13 @@
     <view class="message-wrapper">
       <view class="time">{{ time }}</view>
       <view class="text">
-        <view v-if="props.loading">
+        <view v-if="props.status === 'loading'">
           <view class="cursor"></view>
         </view>
-        <text v-else>
+        <text v-if="props.status === 'success'">
+          {{ props.text }}
+        </text>
+        <text v-if="props.status === 'fail'" :style="{ color: 'red' }">
           {{ props.text }}
         </text>
       </view>
@@ -31,7 +34,7 @@ const props = defineProps<{
   me: boolean;
   text: string;
   time: number;
-  loading: boolean;
+  status: string;
 }>();
 
 const time = computed(() => {

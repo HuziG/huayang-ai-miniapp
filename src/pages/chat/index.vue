@@ -5,7 +5,7 @@
         :text="item.text"
         :me="item.me"
         :time="item.time"
-        :loading="item.loading"
+        :status="item.status"
       />
     </view>
 
@@ -53,63 +53,110 @@ const {
   router: { params },
 }: any = Taro.getCurrentInstance();
 
-const parentMessageId = ref(""),
+const conversationId = ref(""),
   messageList = ref<
     {
-      conversationId: string;
+      parentMessageId: string;
       text: string;
       time: number;
       me: boolean;
-      loading: boolean;
+      status: string;
     }[]
   >([]);
 
 const forbidInput = ref(false);
 const questionContent = ref("");
 
+const getParentMessageId = () => {
+  const parents = messageList.value.filter((item) => item.parentMessageId);
+  return parents[parents.length - 1]?.parentMessageId || "";
+};
+
 const sendMessage = (content: string) => {
   forbidInput.value = true;
 
   messageList.value.push(
-    generateMessage({ text: content, me: true, loading: false })
+    generateMessage({
+      text: content,
+      me: true,
+      status: "success",
+    })
   );
+
+  setTimeout(() => {
+    Taro.pageScrollTo({
+      scrollTop: 99999999,
+      duration: 100,
+    });
+  }, 200);
 
   setTimeout(async () => {
     try {
       messageList.value.push(
-        generateMessage({ text: content, me: false, loading: true })
+        generateMessage({
+          text: content,
+          me: false,
+          status: "loading",
+        })
       );
 
-      const res = await fetchChatAPI(content, {
-        parentMessageId: parentMessageId.value,
-        conversationId: messageList.value[messageList.value.length - 1].conversationId,
-      });
+      // 消息请求/
+      const res = await fetchChatAPI(
+        content,
+        conversationId.value
+          ? {
+              parentMessageId: getParentMessageId(),
+              conversationId: conversationId.value,
+            }
+          : {
+              parentMessageId: getParentMessageId(),
+            }
+      );
 
-      parentMessageId.value = res.data.parentMessageId
+      conversationId.value = res.data.conversationId;
 
       const callbackText: any = generateMessage({
         text: res.data.text,
         me: false,
-        loading: false,
-        conversationId: res.data.conversationId
+        status: "success",
+        parentMessageId: res.data.parentMessageId,
       });
+
+      messageList.value.splice(messageList.value.length - 1, 1, callbackText);
+    } catch (e) {
+      const callbackText: any = generateMessage({
+        text: JSON.stringify(e || ""),
+        me: false,
+        status: "fail",
+      });
+
       messageList.value.splice(messageList.value.length - 1, 1, callbackText);
     } finally {
+      Taro.vibrateShort({ type: "medium" });
       forbidInput.value = false;
+
+      setTimeout(() => {
+        Taro.pageScrollTo({
+          scrollTop: 99999999,
+          duration: 100,
+        });
+      }, 300);
     }
   }, 500);
 };
 
 const generateMessage = (params: {
   text: string;
-  loading: boolean;
   me: boolean;
-  conversationId?: string
+  parentMessageId?: string;
+  status: "fail" | "success" | "loading";
 }) => {
   params["me"] = params.me;
-  params["loading"] = params.loading;
-  params["conversationId"] = params.conversationId || ''
+  if (params.parentMessageId) {
+    params["parentMessageId"] = params.parentMessageId;
+  }
   params["time"] = Math.floor(+new Date() / 1000);
+  params["status"] = params.status;
 
   return params as any;
 };
@@ -126,8 +173,6 @@ const onConfirm = () => {
 
 onMounted(() => {
   sendMessage(params.content);
-
-  // console.log(params.content);
 });
 </script>
 

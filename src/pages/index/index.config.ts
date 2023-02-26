@@ -1,5 +1,5 @@
 export default definePageConfig({
-  navigationBarTitleText: '',
+  navigationBarTitleText: '对话框',
   navigationStyle: 'custom',
   enableShareAppMessage: true
 })
