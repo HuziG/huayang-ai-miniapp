@@ -1,7 +1,9 @@
 import Taro from "@tarojs/taro";
 import HttpFilter from '@/utils/http'
 
-const BASE_URL = "https://hyapi.jinmai.store";
+const BASE_URL = "http://127.0.0.1:3002";
+
+// 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
 
 export const fetchChatAPI = async (
   prompt: string,

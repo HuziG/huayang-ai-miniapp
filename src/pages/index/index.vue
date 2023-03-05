@@ -3,7 +3,7 @@
     <view class="content">
       <view class="title">花样 AI 聊天</view>
 
-      <view class="search-input" @tap="onSearchFocus">
+      <view class="search-input active-animation" @tap="onSearchFocus">
         你想问点啥呢？
       </view>
     </view>

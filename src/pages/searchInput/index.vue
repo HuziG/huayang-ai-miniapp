@@ -6,10 +6,18 @@
   ></view>
 
   <view class="history-content">
-    <view v-for="item in historyQuestion" class="history-item active-animation" @tap="onCheckHistory(item.content)">
+    <view
+      v-for="item in historyQuestion"
+      class="history-item active-animation"
+      @tap="onCheckHistory(item.content)"
+    >
       {{ item.content }}
     </view>
-    <view v-if="historyQuestion.length !== 0" class="clear-history active-animation" @tap="onClearHistory">
+    <view
+      v-if="historyQuestion.length !== 0"
+      class="clear-history active-animation"
+      @tap="onClearHistory"
+    >
       清空历史
     </view>
   </view>
@@ -48,47 +56,58 @@ import { CloseRound } from "@/assets/svg/index";
 import useSafeArea from "@/hook/useSafeArea";
 import { HISTORY_SEARCH } from "@/enum/index";
 
-const historyQuestion = ref<{
-  content: string
-}[]>(Taro.getStorageSync(HISTORY_SEARCH) || []);
+const historyQuestion = ref<
+  {
+    content: string;
+  }[]
+>(Taro.getStorageSync(HISTORY_SEARCH) || []);
 
 const questionContent = ref("");
 
 const { safeHeader } = useSafeArea();
 
 const onConfirm = () => {
-  if (questionContent.value.trim() === '') {
-    return false
+  if (questionContent.value.trim() === "") {
+    return false;
   }
 
   historyQuestion.value.unshift({
-    content: questionContent.value
-  })
+    content: questionContent.value,
+  });
 
-  historyQuestion.value = historyQuestion.value.slice(0,5)
+  historyQuestion.value = historyQuestion.value.slice(0, 5);
 
-  const content = questionContent.value
+  const content = questionContent.value;
 
-  questionContent.value = ''
+  questionContent.value = "";
 
-  Taro.setStorageSync(HISTORY_SEARCH, historyQuestion.value)
+  Taro.setStorageSync(HISTORY_SEARCH, historyQuestion.value);
 
   Taro.navigateTo({
-    url: `/pages/chat/index?content=${content}`
-  })
+    url: `/pages/chat/index?content=${content}`,
+  });
 };
 
 const onClearHistory = () => {
-  historyQuestion.value = []
-
-  Taro.setStorageSync(HISTORY_SEARCH, historyQuestion.value)
-}
+  Taro.showModal({
+    title: "提示",
+    content: "确定清除历史记录？",
+    success: function (res) {
+      if (res.confirm) {
+        historyQuestion.value = [];
+        Taro.setStorageSync(HISTORY_SEARCH, historyQuestion.value);
+      } else if (res.cancel) {
+        console.log("cancel");
+      }
+    },
+  });
+};
 
 const onCheckHistory = (content: string) => {
   Taro.navigateTo({
-    url: `/pages/chat/index?content=${content}`
-  })
-}
+    url: `/pages/chat/index?content=${content}`,
+  });
+};
 
 const onBack = () => {
   Taro.navigateBack({

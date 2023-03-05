@@ -7,8 +7,8 @@
 
   .message-wrapper {
     position: relative;
-    margin-right: 32rpx;
-    margin-top: -16rpx;
+    margin-right: 24rpx;
+    margin-top: -8rpx;
 
     .time {
       width: 300rpx;
@@ -39,8 +39,8 @@
 
   .message-wrapper {
     position: relative;
-    margin-left: 32rpx;
-    margin-top: -16rpx;
+    margin-left: 24rpx;
+    margin-top: -8rpx;
 
     .time {
       width: 300rpx;
@@ -65,7 +65,7 @@
 .avatar {
   width: 90rpx;
   height: 90rpx;
-  border-radius: 10px;
+  border-radius: 5px;
   background: #d8d8d8;
   flex-shrink: 0;
 }
